@@ -16,3 +16,7 @@ is split into a dark and a light cluster by mean luminance; the dark cluster
 becomes the ANSI background color, the light cluster the foreground color,
 and the shading block is chosen so its foreground coverage (`░` 25%, `▒` 50%,
 `▓` 75%, `█` 100%) approximates the light cluster's share of the region.
+
+## Example
+
+![irciii-logo.png](./irciii-logo.png)
