@@ -1,4 +1,6 @@
-Render PNG images as ANSI art in the terminal.
+# graphix
+
+Render PNG images as 24-bit ANSI block art in the terminal.
 
 `graphix` takes a PNG input image and produces artwork made of 24-bit ANSI
 colors and the shading blocks `░▒▓█`, sized to fit the current terminal.
