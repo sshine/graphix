@@ -1,0 +1,24 @@
+[package]
+name = "graphix"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Render PNG images as 24-bit ANSI art with shading blocks"
+readme = "../../README.md"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "graphix"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+image.workspace = true
+terminal_size.workspace = true
+clap.workspace = true
+thiserror.workspace = true
