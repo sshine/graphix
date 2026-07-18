@@ -1,4 +1,6 @@
-//! Render PNG images as ANSI art in the terminal.
+//! # graphix
+//!
+//! Render PNG images as 24-bit ANSI block art in the terminal.
 //!
 //! `graphix` takes a PNG input image and produces artwork made of 24-bit ANSI
 //! colors and the shading blocks `░▒▓█`, sized to fit the current terminal.
@@ -14,6 +16,10 @@
 //! becomes the ANSI background color, the light cluster the foreground color,
 //! and the shading block is chosen so its foreground coverage (`░` 25%, `▒` 50%,
 //! `▓` 75%, `█` 100%) approximates the light cluster's share of the region.
+//!
+//! ## Example
+//!
+//! ![irciii-logo.png](./irciii-logo.png)
 
 use image::RgbImage;
 

@@ -26,7 +26,7 @@
           "$toml.bak" > "$toml"
         tmp=$(mktemp)
         trap 'rm -f "$tmp"; mv "$toml.bak" "$toml"' EXIT
-        (cd "$root/crates/graphix" && cargo readme --no-title --no-license --no-badges) > "$tmp"
+        (cd "$root/crates/graphix" && cargo readme --no-title --no-license --no-badges --no-indent-headings) > "$tmp"
         mv "$toml.bak" "$toml"
         trap - EXIT
 
