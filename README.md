@@ -17,6 +17,21 @@ becomes the ANSI background color, the light cluster the foreground color,
 and the shading block is chosen so its foreground coverage (`░` 25%, `▒` 50%,
 `▓` 75%, `█` 100%) approximates the light cluster's share of the region.
 
+## Library
+
+Everything the binary does is exposed as a library; the CLI is argument
+parsing plus one call:
+
+```rust
+let (cols, rows) = graphix::terminal_grid();
+let art = graphix::render_file("image.png", cols, rows)?;
+print!("{art}");
+```
+
+The lower-level pipeline (`fit_grid` → `render_cells` → `to_ansi`) is also
+public, and the `image` crate is re-exported for constructing images
+without adding it as a separate dependency.
+
 ## Example
 
 ![irciii-logo.png](./irciii-logo.png)

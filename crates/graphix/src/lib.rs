@@ -17,11 +17,45 @@
 //! and the shading block is chosen so its foreground coverage (`░` 25%, `▒` 50%,
 //! `▓` 75%, `█` 100%) approximates the light cluster's share of the region.
 //!
+//! ## Library
+//!
+//! Everything the binary does is exposed as a library; the CLI is argument
+//! parsing plus one call:
+//!
+//! ```rust,no_run
+//! # fn main() -> Result<(), graphix::Error> {
+//! let (cols, rows) = graphix::terminal_grid();
+//! let art = graphix::render_file("image.png", cols, rows)?;
+//! print!("{art}");
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! The lower-level pipeline (`fit_grid` → `render_cells` → `to_ansi`) is also
+//! public, and the `image` crate is re-exported for constructing images
+//! without adding it as a separate dependency.
+//!
 //! ## Example
 //!
 //! ![irciii-logo.png](./irciii-logo.png)
 
+use std::path::{Path, PathBuf};
+
+pub use image;
 use image::RgbImage;
+
+/// Errors returned by the library.
+#[derive(Debug, thiserror::Error)]
+pub enum Error {
+    /// The input image could not be read or decoded.
+    #[error("failed to read {path}: {source}")]
+    Image {
+        /// Path of the offending image file.
+        path: PathBuf,
+        /// The underlying decoding error.
+        source: image::ImageError,
+    },
+}
 
 /// A 24-bit RGB color.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -163,6 +197,39 @@ pub fn to_ansi(grid: &[Vec<Cell>]) -> String {
     out
 }
 
+/// Render an image into at most `max_cols`x`max_rows` terminal cells of
+/// 24-bit ANSI art, preserving aspect ratio.
+///
+/// Composes [`fit_grid`], [`render_cells`] and [`to_ansi`].
+pub fn render_image(img: &RgbImage, max_cols: u32, max_rows: u32) -> String {
+    let (cols, rows) = fit_grid(img.width(), img.height(), max_cols.max(1), max_rows.max(1));
+    to_ansi(&render_cells(img, cols, rows))
+}
+
+/// Load an image from `path` and render it like [`render_image`].
+pub fn render_file(path: impl AsRef<Path>, max_cols: u32, max_rows: u32) -> Result<String, Error> {
+    let path = path.as_ref();
+    let img = image::open(path)
+        .map_err(|source| Error::Image {
+            path: path.to_path_buf(),
+            source,
+        })?
+        .to_rgb8();
+    Ok(render_image(&img, max_cols, max_rows))
+}
+
+/// The terminal size in cells usable for artwork: the current width, and the
+/// height minus one row for the shell prompt. Falls back to 80x24 when there
+/// is no terminal to ask (e.g. output is piped).
+pub fn terminal_grid() -> (u32, u32) {
+    match terminal_size::terminal_size() {
+        Some((terminal_size::Width(w), terminal_size::Height(h))) => {
+            (u32::from(w.max(1)), u32::from(h.saturating_sub(1).max(1)))
+        }
+        None => (80, 24),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -241,6 +308,19 @@ mod tests {
             }
         );
         assert_eq!(cell.bg, Rgb { r: 0, g: 0, b: 0 });
+    }
+
+    #[test]
+    fn render_image_stays_within_bounds() {
+        let img = RgbImage::from_pixel(100, 100, image::Rgb([9, 9, 9]));
+        let art = render_image(&img, 40, 12);
+        assert_eq!(art.lines().count(), 12);
+    }
+
+    #[test]
+    fn render_file_reports_missing_path() {
+        let err = render_file("does-not-exist.png", 80, 24);
+        assert!(matches!(err, Err(Error::Image { .. })));
     }
 
     #[test]

@@ -13,10 +13,10 @@ The rendering pipeline lives in `crates/graphix/src/lib.rs`:
 
 1. `fit_grid` scales image dimensions into the terminal grid (a cell counts as 1x2 pixels
    of aspect, so images keep their proportions)
-2. `render_cells` maps each cell's source-pixel region to a `Cell`: pixels split into a
+1. `render_cells` maps each cell's source-pixel region to a `Cell`: pixels split into a
    dark/light cluster by mean luminance; dark average = ANSI background, light average =
    foreground, and the light share picks the block (`░` 25%, `▒` 50%, `▓` 75%, `█` 100%)
-3. `to_ansi` serializes the grid with 24-bit SGR sequences, deduplicating consecutive
+1. `to_ansi` serializes the grid with 24-bit SGR sequences, deduplicating consecutive
    color runs and resetting at the end of every line
 
 ## Development
