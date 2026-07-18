@@ -1,0 +1,31 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/sshine/graphix"
+
+[workspace.lints.rust]
+unused_must_use = "deny"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+
+[workspace.dependencies]
+# Internal crates
+graphix = { version = "0.1.0", path = "crates/graphix" }
+
+# Image decoding
+image = { version = "0.25", default-features = false, features = ["png"] }
+
+# Terminal
+terminal_size = "0.4"
+
+# Error handling
+thiserror = "2"
+
+# CLI
+clap = { version = "4", features = ["derive"] }
