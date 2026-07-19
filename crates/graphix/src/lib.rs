@@ -35,9 +35,10 @@
 //! public, and the `image` crate is re-exported for constructing images
 //! without adding it as a separate dependency.
 //!
-//! ## Example
+//! ## Examples
 //!
 //! ![irciii-logo.png](./irciii-logo.png)
+//! ![keen.png](./keen.png)
 
 use std::path::{Path, PathBuf};
 
