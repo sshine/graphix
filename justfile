@@ -30,11 +30,15 @@ build:
 doc *args='':
     cargo doc --no-deps --all-features {{args}}
 
-readme:
-    cargo-readme-workspace
+readme_args := "--project-root crates/graphix --no-title --no-license --no-badges --no-indent-headings"
 
+# Regenerate README.md from the graphix crate docs
+readme:
+    cargo readme {{readme_args}} -o README.md
+
+# Check README.md is in sync with the crate docs
 readme-check:
-    cargo-readme-workspace --check
+    cargo readme {{readme_args}} | diff - README.md
 
 # Run CI checks locally
 ci: fmt-check lint test doc readme-check build

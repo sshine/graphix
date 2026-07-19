@@ -10,6 +10,12 @@
       lib,
       ...
     }:
+    let
+      # Flags to reproduce the committed README.md from the graphix crate docs.
+      # The webern/cargo-readme fork understands workspace inheritance, so no
+      # Cargo.toml materialization workaround is needed.
+      readmeArgs = "--project-root crates/graphix --no-title --no-license --no-badges --no-indent-headings";
+    in
     {
       hk-nix.settings.hooks = {
         "pre-commit" = {
@@ -30,7 +36,8 @@
             check = "cargo clippy --all-targets --all-features -- -D warnings";
           };
           readme = {
-            check = "cargo-readme-workspace --check";
+            check = "cargo readme ${readmeArgs} | diff - README.md";
+            fix = "cargo readme ${readmeArgs} -o README.md";
           };
           lock-check = {
             check = "cargo metadata --locked --format-version 1 > /dev/null";
