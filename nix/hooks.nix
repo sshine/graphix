@@ -15,6 +15,11 @@
       # The webern/cargo-readme fork understands workspace inheritance, so no
       # Cargo.toml materialization workaround is needed.
       readmeArgs = "--project-root crates/graphix --no-title --no-license --no-badges --no-indent-headings";
+
+      # Reference treefmt by absolute store path: the `nix flake check` hk-check
+      # sandbox runs the pre-commit hook without the devshell PATH, so a bare
+      # `treefmt` is not found there (the deadnix/conventional steps do the same).
+      treefmt = lib.getExe config.treefmt.build.wrapper;
     in
     {
       hk-nix.settings.hooks = {
@@ -22,8 +27,8 @@
           fix = true;
           stash = "git";
           steps.treefmt = {
-            check = "treefmt --fail-on-change --no-cache {{files}}";
-            fix = "treefmt {{files}}";
+            check = "${treefmt} --fail-on-change --no-cache {{files}}";
+            fix = "${treefmt} {{files}}";
           };
         };
 
