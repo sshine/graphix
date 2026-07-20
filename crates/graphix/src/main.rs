@@ -18,6 +18,12 @@ struct Args {
     /// minus one row for the shell prompt).
     #[arg(short = 'H', long)]
     height: Option<u32>,
+
+    /// Rendering granularity, coarsest to finest: shade blocks (shade), half
+    /// blocks (half-block), 2x3 sextants (sextant), 2x4 braille dots (braille),
+    /// or 2x4 octants (octant, needs a Unicode 16 font).
+    #[arg(short = 'm', long, value_enum, default_value_t = graphix::Mode::Shade)]
+    mode: graphix::Mode,
 }
 
 fn main() -> ExitCode {
@@ -25,7 +31,7 @@ fn main() -> ExitCode {
     let (term_cols, term_rows) = graphix::terminal_grid();
     let max_cols = args.width.unwrap_or(term_cols).max(1);
     let max_rows = args.height.unwrap_or(term_rows).max(1);
-    match graphix::render_file(&args.image, max_cols, max_rows) {
+    match graphix::render_file(&args.image, max_cols, max_rows, args.mode) {
         Ok(art) => {
             print!("{art}");
             ExitCode::SUCCESS
