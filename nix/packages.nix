@@ -22,6 +22,7 @@
       packages = {
         default = buildCrate { pname = "graphix"; };
         conventional-commit-check = buildCrate { pname = "conventional-commit-check"; };
+        pixel-planets = buildCrate { pname = "pixel-planets"; };
       };
 
       checks.graphix = packages.default;
