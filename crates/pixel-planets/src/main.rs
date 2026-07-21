@@ -14,9 +14,10 @@ use pixel_planets::{CloudMode, Error, PlanetParams, Renderer, output};
 #[derive(Debug, Parser)]
 #[command(name = "pixel-planets", version, about)]
 struct Args {
-    /// Seed for all procedural fields.
-    #[arg(long, default_value_t = 42)]
-    seed: u64,
+    /// Seed for all procedural fields (default: a random seed, printed on
+    /// startup so you can reproduce the planet with --seed).
+    #[arg(long)]
+    seed: Option<u64>,
 
     /// Sea level (0..=1): the elevation below which the surface floods.
     #[arg(long, default_value_t = 0.60)]
@@ -54,9 +55,10 @@ struct Args {
     #[arg(long, default_value_t = 0.0)]
     glow: f32,
 
-    /// Axial tilt in degrees (-90..=90), in the view plane.
-    #[arg(long = "tilt", default_value_t = 15.0, allow_hyphen_values = true)]
-    tilt_deg: f32,
+    /// Axial tilt override in degrees (-90..=90), in the view plane. Omitted,
+    /// the tilt is derived from the seed (in ±35°).
+    #[arg(long = "tilt", allow_hyphen_values = true)]
+    tilt: Option<f32>,
 
     /// Cloud model.
     #[arg(long, value_enum, default_value_t = CloudMode::Realistic)]
@@ -127,9 +129,9 @@ struct Args {
 }
 
 impl Args {
-    fn params(&self) -> PlanetParams {
+    fn params(&self, seed: u64) -> PlanetParams {
         PlanetParams {
-            seed: self.seed,
+            seed,
             water: self.water,
             temp: self.temp,
             humidity: self.humidity,
@@ -139,7 +141,7 @@ impl Args {
             atmosphere: self.atmosphere,
             bloom: self.bloom,
             glow: self.glow,
-            tilt_deg: self.tilt_deg,
+            tilt: self.tilt,
         }
     }
 
@@ -181,8 +183,19 @@ fn main() -> ExitCode {
     }
 }
 
+/// A process-random seed drawn from OS entropy via the randomly-keyed default
+/// hasher — no extra dependency needed for the one random value we want.
+fn random_seed() -> u64 {
+    use std::hash::{BuildHasher, RandomState};
+    RandomState::new().hash_one(0xC0FFEE_u64)
+}
+
 fn run(args: &Args) -> Result<(), Error> {
-    let params = args.params();
+    let seed = args.seed.unwrap_or_else(random_seed);
+    if args.seed.is_none() {
+        eprintln!("pixel-planets: seed {seed}");
+    }
+    let params = args.params(seed);
     params.validate()?;
     let renderer = Renderer::new(
         params,
@@ -271,8 +284,14 @@ mod tests {
     #[test]
     fn defaults_parse() {
         let args = Args::try_parse_from(["pixel-planets"]).expect("defaults must parse");
-        assert_eq!(args.seed, 42);
-        assert!(args.params().validate().is_ok());
+        assert_eq!(args.seed, None); // no --seed means a random seed at runtime
+        assert!(args.params(42).validate().is_ok());
+    }
+
+    #[test]
+    fn explicit_seed_parses() {
+        let args = Args::try_parse_from(["p", "--seed", "7"]).expect("parses");
+        assert_eq!(args.seed, Some(7));
     }
 
     #[test]
@@ -289,7 +308,7 @@ mod tests {
         let args = Args::try_parse_from(["p", "--temp", "-0.5", "--tilt", "-30"])
             .expect("hyphen values must parse");
         assert_eq!(args.temp, -0.5);
-        assert_eq!(args.tilt_deg, -30.0);
+        assert_eq!(args.tilt, Some(-30.0));
     }
 
     #[test]

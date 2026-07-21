@@ -91,15 +91,23 @@ impl CloudField {
     }
 
     /// Sample the layer at unit vector `v` in the tilted (unrotated) frame,
-    /// at absolute time `t` seconds.
-    pub fn sample(&self, v: [f32; 3], t: f32, cloudiness: f32, period_secs: f32) -> CloudSample {
+    /// at absolute time `t` seconds. `spin` (`+1.0`/`-1.0`) is the planet's
+    /// rotation direction, which the clouds drift along.
+    pub fn sample(
+        &self,
+        v: [f32; 3],
+        t: f32,
+        cloudiness: f32,
+        period_secs: f32,
+        spin: f32,
+    ) -> CloudSample {
         match self {
             CloudField::None => CloudSample::Clear,
             CloudField::Realistic { noise } => {
                 let lat = v[1].clamp(-1.0, 1.0).asin();
                 // Zonal advection: rotating the sample point backward in time
                 // by the local wind is exactly wind-driven drift on the sphere.
-                let q = rot_y(v, -zonal_speed(lat, period_secs) * t);
+                let q = rot_y(v, -spin * zonal_speed(lat, period_secs) * t);
                 // Shapes evolve by drifting through the 3D field over time.
                 let p = [q[0] * 3.0, q[1] * 3.0 + 0.05 * t, q[2] * 3.0];
                 // fBm mass concentrates near zero; stretch it so cloud fields
@@ -117,7 +125,7 @@ impl CloudField {
             }
             CloudField::Cartoon { puffs } => {
                 for puff in puffs {
-                    let q = rot_y(v, -puff.drift * t);
+                    let q = rot_y(v, -spin * puff.drift * t);
                     if puff.contains(q) {
                         // Underside rim: a point slightly below (toward -y)
                         // that falls outside the cluster shades the edge.
@@ -203,7 +211,7 @@ mod tests {
         let points = sphere_points(2000);
         let cloudy = points
             .iter()
-            .filter(|&&v| field.sample(v, 3.0, cloudiness, 12.0) != CloudSample::Clear)
+            .filter(|&&v| field.sample(v, 3.0, cloudiness, 12.0, 1.0) != CloudSample::Clear)
             .count();
         cloudy as f32 / points.len() as f32
     }
@@ -250,7 +258,9 @@ mod tests {
         let points = sphere_points(500);
         let changed = points
             .iter()
-            .filter(|&&v| field.sample(v, 0.0, 0.5, 12.0) != field.sample(v, 3.0, 0.5, 12.0))
+            .filter(|&&v| {
+                field.sample(v, 0.0, 0.5, 12.0, 1.0) != field.sample(v, 3.0, 0.5, 12.0, 1.0)
+            })
             .count();
         assert!(changed > 0, "cloud field must evolve between t=0 and t=3");
     }
@@ -260,7 +270,10 @@ mod tests {
         let a = CloudField::new(9, CloudMode::Realistic, 0.5, 12.0);
         let b = CloudField::new(9, CloudMode::Realistic, 0.5, 12.0);
         for v in sphere_points(200) {
-            assert_eq!(a.sample(v, 1.5, 0.5, 12.0), b.sample(v, 1.5, 0.5, 12.0));
+            assert_eq!(
+                a.sample(v, 1.5, 0.5, 12.0, 1.0),
+                b.sample(v, 1.5, 0.5, 12.0, 1.0)
+            );
         }
     }
 }

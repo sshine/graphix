@@ -5,12 +5,17 @@ use std::f32::consts::{FRAC_PI_2, PI, TAU};
 
 use crate::Error;
 use crate::biome::{self, Biome};
-use crate::noise::Noise;
+use crate::noise::{Noise, hash_to_unit, splitmix64};
 
 /// Noise channel tags for the independent surface fields.
 const CH_ELEVATION: u64 = 1;
 const CH_MOISTURE: u64 = 2;
 const CH_BLOOM: u64 = 3;
+const CH_SPIN: u64 = 4;
+const CH_TILT: u64 = 5;
+
+/// The maximum magnitude of a seed-derived axial tilt, in degrees.
+const MAX_SEED_TILT: f32 = 35.0;
 
 /// The macro-ecosystem of a habitable planet.
 ///
@@ -40,8 +45,9 @@ pub struct PlanetParams {
     /// Bioluminescent shallows in `0..=1`: coastal water glows cyan on the
     /// night side, revealed as the planet rotates past the terminator.
     pub glow: f32,
-    /// Axial tilt in degrees, in the view plane.
-    pub tilt_deg: f32,
+    /// Axial tilt override in degrees (view plane). `None` derives a random
+    /// tilt from the seed (in ±35°); `Some(d)` forces `d`.
+    pub tilt: Option<f32>,
 }
 
 impl Default for PlanetParams {
@@ -57,7 +63,7 @@ impl Default for PlanetParams {
             atmosphere: 0.5,
             bloom: 0.0,
             glow: 0.0,
-            tilt_deg: 15.0,
+            tilt: None,
         }
     }
 }
@@ -91,14 +97,24 @@ impl PlanetParams {
                 range: "-1..=1",
             });
         }
-        if !(-90.0..=90.0).contains(&self.tilt_deg) {
+        if let Some(tilt) = self.tilt
+            && !(-90.0..=90.0).contains(&tilt)
+        {
             return Err(Error::InvalidParam {
                 name: "tilt",
-                value: self.tilt_deg,
+                value: tilt,
                 range: "-90..=90 degrees",
             });
         }
         Ok(())
+    }
+
+    /// The effective axial tilt in degrees: the override if set, otherwise a
+    /// seed-derived value in ±35°.
+    pub fn tilt_deg(&self) -> f32 {
+        self.tilt.unwrap_or_else(|| {
+            (hash_to_unit(splitmix64(self.seed ^ CH_TILT)) * 2.0 - 1.0) * MAX_SEED_TILT
+        })
     }
 
     /// The temperature below which water freezes and land snows over; a
@@ -115,6 +131,16 @@ impl PlanetParams {
     /// The planet's root noise field.
     pub fn noise(&self) -> Noise {
         Noise::new(self.seed)
+    }
+
+    /// Rotation direction, derived from the seed: `+1.0` for prograde
+    /// (eastward) or `-1.0` for retrograde. The clouds follow the surface.
+    pub fn spin(&self) -> f32 {
+        if splitmix64(self.seed ^ CH_SPIN) & 1 == 0 {
+            1.0
+        } else {
+            -1.0
+        }
     }
 
     /// Elevation in roughly `0..=1` at unit-sphere point `p`.
@@ -246,6 +272,25 @@ mod tests {
     #[test]
     fn default_params_validate() {
         assert!(PlanetParams::default().validate().is_ok());
+    }
+
+    #[test]
+    fn spin_is_seed_derived_and_both_directions_occur() {
+        let spin_of = |seed| {
+            PlanetParams {
+                seed,
+                ..Default::default()
+            }
+            .spin()
+        };
+        // Deterministic per seed, and always ±1.
+        for seed in 0..64 {
+            assert_eq!(spin_of(seed), spin_of(seed));
+            assert!(spin_of(seed).abs() == 1.0);
+        }
+        // Both prograde and retrograde planets exist across seeds.
+        let spins: Vec<f32> = (0..64).map(spin_of).collect();
+        assert!(spins.contains(&1.0) && spins.contains(&-1.0));
     }
 
     #[test]

@@ -72,6 +72,7 @@ pub struct Renderer {
     clouds: CloudField,
     size: u32,
     period_secs: f32,
+    spin: f32,
     zoom: ZoomRamp,
 }
 
@@ -87,12 +88,14 @@ impl Renderer {
     ) -> Self {
         let surface = SurfaceMap::bake(&params, zoom.max_zoom());
         let clouds = CloudField::new(params.seed, mode, params.cloudiness, period_secs);
+        let spin = params.spin();
         Renderer {
             params,
             surface,
             clouds,
             size,
             period_secs,
+            spin,
             zoom,
         }
     }
@@ -108,8 +111,8 @@ impl Renderer {
         let center = size as f32 / 2.0;
         let radius = center - 1.0;
         let zoom = self.zoom.at(t);
-        let tilt = self.params.tilt_deg.to_radians();
-        let phase = TAU * t / self.period_secs.max(f32::MIN_POSITIVE);
+        let tilt = self.params.tilt_deg().to_radians();
+        let phase = self.spin * TAU * t / self.period_secs.max(f32::MIN_POSITIVE);
         // Sun from the upper left, fixed in view space.
         let sun = normalize([-0.55, 0.35, 0.75]);
 
@@ -166,7 +169,9 @@ impl Renderer {
         let cloudiness = self.params.cloudiness;
 
         // Clouds live in the tilted frame: independent of surface rotation.
-        let cloud = self.clouds.sample(v, t, cloudiness, self.period_secs);
+        let cloud = self
+            .clouds
+            .sample(v, t, cloudiness, self.period_secs, self.spin);
         let (mut color, is_cloud) = match cloud {
             CloudSample::Lit => (CLOUD_LIT, true),
             CloudSample::Shaded => (CLOUD_SHADED, true),
@@ -183,7 +188,7 @@ impl Renderer {
             ]);
             if self
                 .clouds
-                .sample(toward_sun, t, cloudiness, self.period_secs)
+                .sample(toward_sun, t, cloudiness, self.period_secs, self.spin)
                 != CloudSample::Clear
             {
                 color = mix(color, [0, 0, 0], 0.25);
