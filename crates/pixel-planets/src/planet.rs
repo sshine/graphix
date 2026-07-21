@@ -103,8 +103,13 @@ impl PlanetParams {
 
     /// The temperature below which water freezes and land snows over; a
     /// larger ice parameter pushes the caps toward the equator.
+    ///
+    /// Temperature falls as `1 − |lat_n|^1.6` (ignoring elevation and bias),
+    /// so the cap edge sits where that equals the threshold. The range below
+    /// puts the default (`ice = 0.3`) cap edge near 66° latitude — a visible
+    /// polar cap — and reaches roughly 33° at `ice = 1.0` for a near-snowball.
     pub fn ice_threshold(&self) -> f32 {
-        0.12 + 0.28 * self.ice
+        0.2 + 0.6 * self.ice
     }
 
     /// The planet's root noise field.
