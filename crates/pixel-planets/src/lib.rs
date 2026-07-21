@@ -22,6 +22,7 @@
 
 pub mod biome;
 pub mod clouds;
+pub mod editor;
 pub mod noise;
 pub mod output;
 pub mod planet;
@@ -30,6 +31,13 @@ pub mod render;
 pub use clouds::CloudMode;
 pub use planet::PlanetParams;
 pub use render::Renderer;
+
+/// A process-random seed drawn from OS entropy via the randomly-keyed default
+/// hasher — no extra dependency for the one random value we want.
+pub fn random_seed() -> u64 {
+    use std::hash::{BuildHasher, RandomState};
+    RandomState::new().hash_one(0xC0FFEE_u64)
+}
 
 /// Errors returned by the library.
 #[derive(Debug, thiserror::Error)]

@@ -98,6 +98,11 @@ struct Args {
     #[arg(long)]
     zoom_secs: Option<f32>,
 
+    /// Open the interactive editor: the live planet on the left, adjustable
+    /// parameter knobs on the right (up/down to select, left/right to turn).
+    #[arg(long, conflicts_with_all = ["still", "frames", "gif"])]
+    editor: bool,
+
     /// Print a single ANSI frame and exit.
     #[arg(long, conflicts_with_all = ["frames", "gif"])]
     still: bool,
@@ -183,20 +188,18 @@ fn main() -> ExitCode {
     }
 }
 
-/// A process-random seed drawn from OS entropy via the randomly-keyed default
-/// hasher — no extra dependency needed for the one random value we want.
-fn random_seed() -> u64 {
-    use std::hash::{BuildHasher, RandomState};
-    RandomState::new().hash_one(0xC0FFEE_u64)
-}
-
 fn run(args: &Args) -> Result<(), Error> {
-    let seed = args.seed.unwrap_or_else(random_seed);
+    let seed = args.seed.unwrap_or_else(pixel_planets::random_seed);
     if args.seed.is_none() {
         eprintln!("pixel-planets: seed {seed}");
     }
     let params = args.params(seed);
     params.validate()?;
+
+    if args.editor {
+        return pixel_planets::editor::run(params, args.clouds, args.size, args.mode);
+    }
+
     let renderer = Renderer::new(
         params,
         args.clouds,

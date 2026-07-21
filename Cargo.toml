@@ -24,6 +24,12 @@ image = { version = "0.25", default-features = false, features = ["png"] }
 # Terminal
 terminal_size = "0.4"
 
+# Interactive TUI editor (pixel-planets --editor). ratatui/crossterm pinned to
+# match promptui-core's own versions so the crossterm KeyEvent types line up.
+promptui-core = { git = "https://github.com/sshine/promptui.git" }
+ratatui = "0.29"
+crossterm = "0.28"
+
 # Error handling
 thiserror = "2"
 

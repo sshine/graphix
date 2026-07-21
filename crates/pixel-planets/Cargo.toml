@@ -22,3 +22,6 @@ graphix.workspace = true
 clap.workspace = true
 thiserror.workspace = true
 image = { workspace = true, features = ["gif"] }
+promptui-core.workspace = true
+ratatui.workspace = true
+crossterm.workspace = true

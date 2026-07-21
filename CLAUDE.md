@@ -7,7 +7,8 @@ Render PNG images as 24-bit ANSI art with Unicode blocks or braille dots, sized 
 This is a Cargo workspace with crates under `crates/`:
 
 - **graphix**: Library (image → cell grid → ANSI string) and the CLI binary
-- **pixel-planets**: Procedural pixel-art planet simulator/renderer (stateless: seed + params)
+- **pixel-planets**: Procedural pixel-art planet simulator/renderer (stateless: seed + params),
+  with an interactive `--editor` (ratatui/promptui-core) for tuning parameters live
 - **conventional-commit-check**: The commit-msg git hook binary
 
 Crates follow one shape: a library holding the logic and public API (doc comments on all
