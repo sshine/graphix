@@ -7,7 +7,14 @@ Render PNG images as 24-bit ANSI art with Unicode blocks or braille dots, sized 
 This is a Cargo workspace with crates under `crates/`:
 
 - **graphix**: Library (image → cell grid → ANSI string) and the CLI binary
+- **pixel-planets**: Procedural pixel-art planet simulator/renderer (stateless: seed + params)
 - **conventional-commit-check**: The commit-msg git hook binary
+
+Crates follow one shape: a library holding the logic and public API (doc comments on all
+public items), plus a thin clap binary returning ExitCode. Workspace membership is automatic
+(`crates/*`); crates inherit `workspace.package` fields, take dependencies from
+`[workspace.dependencies]` via `.workspace = true`, and opt into workspace lints with
+`[lints] workspace = true`.
 
 The rendering pipeline lives in `crates/graphix/src/lib.rs`:
 
@@ -28,6 +35,15 @@ The rendering pipeline lives in `crates/graphix/src/lib.rs`:
 1. `to_ansi` serializes the grid with 24-bit SGR sequences, deduplicating consecutive
    color runs and resetting at the end of every line
 
+## Visual feedback (for Claude)
+
+The sandbox cannot take terminal screenshots, but PNG files can be viewed with the Read tool:
+
+```sh
+cargo run -p graphix -- <img.png> -m octant --raster out.png   # font-free PNG preview of the ANSI output
+cargo run --release -p pixel-planets -- --frames 4 --out dir/  # planet animation frames as PNGs
+```
+
 ## Development
 
 ### Nix (recommended)
@@ -42,6 +58,9 @@ nix develop     # enter the dev shell
 
 Git hooks are managed by hk-nix (pre-commit: treefmt; pre-push: deadnix, clippy,
 readme-check, lock-check; commit-msg: conventional commits).
+
+The flake is dendritic: flake-parts + import-tree over `nix/`, so every `.nix` file there is
+a flake-parts module. Adding a crate needs one `buildCrate` line in `nix/packages.nix`.
 
 ### Common commands
 
