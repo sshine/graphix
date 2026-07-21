@@ -73,6 +73,9 @@ use std::path::{Path, PathBuf};
 pub use image;
 use image::RgbImage;
 
+mod raster;
+pub use raster::rasterize;
+
 /// Errors returned by the library.
 #[derive(Debug, thiserror::Error)]
 pub enum Error {

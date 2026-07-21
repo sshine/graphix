@@ -24,6 +24,11 @@ struct Args {
     /// or 2x4 octants (octant, needs a Unicode 16 font).
     #[arg(short = 'm', long, value_enum, default_value_t = graphix::Mode::Shade)]
     mode: graphix::Mode,
+
+    /// Instead of printing ANSI, rasterize the cell grid to a PNG at this path:
+    /// a font-free, pixel-perfect preview of the terminal output.
+    #[arg(long, value_name = "PATH")]
+    raster: Option<PathBuf>,
 }
 
 fn main() -> ExitCode {
@@ -31,14 +36,24 @@ fn main() -> ExitCode {
     let (term_cols, term_rows) = graphix::terminal_grid();
     let max_cols = args.width.unwrap_or(term_cols).max(1);
     let max_rows = args.height.unwrap_or(term_rows).max(1);
-    match graphix::render_file(&args.image, max_cols, max_rows, args.mode) {
-        Ok(art) => {
-            print!("{art}");
-            ExitCode::SUCCESS
-        }
+    match run(&args, max_cols, max_rows) {
+        Ok(()) => ExitCode::SUCCESS,
         Err(err) => {
             eprintln!("graphix: {err}");
             ExitCode::FAILURE
         }
     }
+}
+
+fn run(args: &Args, max_cols: u32, max_rows: u32) -> Result<(), Box<dyn std::error::Error>> {
+    if let Some(out) = &args.raster {
+        let img = graphix::image::open(&args.image)?.to_rgb8();
+        let (cols, rows) = graphix::fit_grid(img.width(), img.height(), max_cols, max_rows);
+        let grid = graphix::render_cells(&img, cols, rows, args.mode);
+        graphix::rasterize(&grid, 8, 16).save(out)?;
+    } else {
+        let art = graphix::render_file(&args.image, max_cols, max_rows, args.mode)?;
+        print!("{art}");
+    }
+    Ok(())
 }
