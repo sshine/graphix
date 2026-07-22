@@ -13,7 +13,10 @@
           inherit pname;
           version = "0.1.0";
           src = ../.;
-          cargoLock.lockFile = ../Cargo.lock;
+          cargoLock = {
+            lockFile = ../Cargo.lock;
+            outputHashes."promptui-core-0.1.0" = "sha256-7UEKiFdfreY4m9u+t4/GD//I95+xMXaDOeekrrlBzxI=";
+          };
           buildAndTestSubdir = "crates/${pname}";
           meta.mainProgram = mainProgram;
         };
