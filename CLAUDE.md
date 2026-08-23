@@ -9,6 +9,8 @@ This is a Cargo workspace with crates under `crates/`:
 - **graphix**: Library (image → cell grid → ANSI string) and the CLI binary
 - **pixel-planets**: Procedural pixel-art planet simulator/renderer (stateless: seed + params),
   with an interactive `--editor` (ratatui/promptui-core) for tuning parameters live
+- **flake**: The spinning NixOS lambda flake (six extruded lambdas, z-buffered and shaded
+  into an RGB frame per spin angle), ported from the ASCII spinner on jokamachi.systems
 - **conventional-commit-check**: The commit-msg git hook binary
 
 Crates follow one shape: a library holding the logic and public API (doc comments on all
@@ -43,6 +45,14 @@ The sandbox cannot take terminal screenshots, but PNG files can be viewed with t
 ```sh
 cargo run -p graphix -- <img.png> -m octant --raster out.png   # font-free PNG preview of the ANSI output
 cargo run --release -p pixel-planets -- --frames 4 --out dir/  # planet animation frames as PNGs
+cargo run --release -p flake -- --frames 4 --out dir/          # flake spin frames as PNGs
+```
+
+Both `pixel-planets` and `flake` also take `--terminal-preview` with `--frames`, which
+dumps the graphix cell rasterization instead of the raw frame:
+
+```sh
+cargo run --release -p flake -- --frames 2 --terminal-preview --out dir/
 ```
 
 ## Development
