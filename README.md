@@ -69,3 +69,14 @@ The `flake` crate spinning the NixOS lambda flake, drawn in `octant` mode:
 ```sh
 flake --tilt 70 --terminal-preview --gif flake.gif
 ```
+
+The `pixel-planets` crate writing its source images straight to GIF instead
+of through the terminal, in close orbit and on approach:
+
+![a pixel-art ocean world in close orbit](./planet.gif)
+![a pixel-art world growing as the camera closes in](./world.gif)
+
+```sh
+pixel-planets --gif planet.gif
+pixel-planets --zoom 0.2 --zoom-to 1.5 --gif world.gif
+```
