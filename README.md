@@ -59,3 +59,13 @@ print!("{art}");
 The lower-level pipeline (`fit_grid` → `render_cells` → `to_ansi`) is also
 public, and the `image` crate is re-exported for constructing images
 without adding it as a separate dependency.
+
+## Examples
+
+The `flake` crate spinning the NixOS lambda flake, drawn in `octant` mode:
+
+![the NixOS flake spinning in the terminal](./flake.gif)
+
+```sh
+flake --tilt 70 --terminal-preview --gif flake.gif
+```

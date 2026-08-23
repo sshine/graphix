@@ -65,8 +65,13 @@
 //!
 //! ## Examples
 //!
-//! ![irciii-logo.png](./irciii-logo.png)
-//! ![keen.png](./keen.png)
+//! The `flake` crate spinning the NixOS lambda flake, drawn in `octant` mode:
+//!
+//! ![the NixOS flake spinning in the terminal](./flake.gif)
+//!
+//! ```sh
+//! flake --tilt 70 --terminal-preview --gif flake.gif
+//! ```
 
 use std::path::{Path, PathBuf};
 
