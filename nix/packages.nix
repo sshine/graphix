@@ -29,6 +29,7 @@
         flake = buildCrate { pname = "flake"; };
         aizawa = buildCrate { pname = "aizawa"; };
         thomas = buildCrate { pname = "thomas"; };
+        pixel-blocks = buildCrate { pname = "pixel-blocks"; };
       };
 
       checks.graphix = packages.default;

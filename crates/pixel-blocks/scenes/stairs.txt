@@ -1,0 +1,49 @@
+# A staircase climbing away from the viewer, cut into a hillside.
+# Each step touches the next only along one edge, so every block
+# has to be ordered against its diagonal neighbours.
+
+g grass
+d dirt
+s stone
+
+# z = 0
+ddddd
+ddddd
+ddddd
+ddddd
+ddddd
+
+# z = 1
+ggggg
+ddddd
+ddddd
+ddddd
+ddddd
+
+# z = 2
+.....
+ggggg
+ddddd
+ddddd
+ddddd
+
+# z = 3
+.....
+.....
+ggggg
+ddddd
+ddddd
+
+# z = 4
+.....
+.....
+.....
+ggggg
+ddddd
+
+# z = 5
+.....
+.....
+.....
+.....
+ggggg

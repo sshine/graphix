@@ -1,0 +1,18 @@
+name = "grass"
+
+[top]
+ramp = [[60, 92, 52], [67, 102, 59], [74, 112, 64], [83, 126, 72]]
+
+[top.pattern.speckle]
+contrast = 1.0
+
+[side]
+ramp = [[83, 57, 38], [113, 79, 54], [140, 101, 69], [172, 124, 86]]
+
+[side.pattern]
+layer = [{ speckle = { contrast = 1.0 } }, { scatter = { cell = 5, density = 0.35, size = 1, color = [116, 116, 124] } }, { fringe = { depth = 3, jitter = 2, span = 2, ramp = [[60, 92, 52], [67, 102, 59], [74, 112, 64], [83, 126, 72]], pattern = { speckle = { contrast = 1.0 } } } }]
+
+[shading]
+top = 1.0
+left = 0.8
+right = 0.6

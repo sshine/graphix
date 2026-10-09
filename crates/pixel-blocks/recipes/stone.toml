@@ -1,0 +1,18 @@
+name = "stone"
+
+[top]
+ramp = [[97, 97, 97], [108, 108, 108], [118, 118, 118], [133, 133, 133]]
+
+[top.pattern.speckle]
+contrast = 1.0
+
+[side]
+ramp = [[97, 97, 97], [108, 108, 108], [118, 118, 118], [133, 133, 133]]
+
+[side.pattern.speckle]
+contrast = 1.0
+
+[shading]
+top = 1.0
+left = 0.8
+right = 0.6

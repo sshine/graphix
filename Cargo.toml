@@ -32,6 +32,10 @@ promptui-core = { git = "https://github.com/sshine/promptui.git" }
 ratatui = "0.29"
 crossterm = "0.28"
 
+# Recipe serialization (pixel-blocks)
+serde = { version = "1", features = ["derive"] }
+toml = "0.9"
+
 # Error handling
 thiserror = "2"
 

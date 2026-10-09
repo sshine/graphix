@@ -1,0 +1,22 @@
+name = "sand"
+
+[top]
+ramp = [[205, 182, 135], [209, 192, 147], [214, 203, 160], [222, 215, 172]]
+
+[top.pattern.blotch]
+scale = 5.0
+contrast = 1.0
+octaves = 3
+
+[side]
+ramp = [[205, 182, 135], [209, 192, 147], [214, 203, 160], [222, 215, 172]]
+
+[side.pattern.blotch]
+scale = 5.0
+contrast = 1.0
+octaves = 3
+
+[shading]
+top = 1.0
+left = 0.8
+right = 0.6

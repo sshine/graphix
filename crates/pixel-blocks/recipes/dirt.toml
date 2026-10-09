@@ -1,0 +1,18 @@
+name = "dirt"
+
+[top]
+ramp = [[83, 57, 38], [113, 79, 54], [140, 101, 69], [172, 124, 86]]
+
+[top.pattern]
+layer = [{ speckle = { contrast = 1.0 } }, { scatter = { cell = 5, density = 0.35, size = 1, color = [116, 116, 124] } }]
+
+[side]
+ramp = [[83, 57, 38], [113, 79, 54], [140, 101, 69], [172, 124, 86]]
+
+[side.pattern]
+layer = [{ speckle = { contrast = 1.0 } }, { scatter = { cell = 5, density = 0.35, size = 1, color = [116, 116, 124] } }]
+
+[shading]
+top = 1.0
+left = 0.8
+right = 0.6

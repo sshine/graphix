@@ -1,0 +1,18 @@
+name = "planks"
+
+[top]
+ramp = [[120, 88, 50], [141, 105, 60], [157, 118, 68], [173, 132, 78]]
+
+[top.pattern]
+layer = [{ blotch = { scale = 6.0, contrast = 1.0, octaves = 4 } }, { lattice = { rows = 4, cols = 0, stagger = false, mortar = [84, 61, 34] } }]
+
+[side]
+ramp = [[120, 88, 50], [141, 105, 60], [157, 118, 68], [173, 132, 78]]
+
+[side.pattern]
+layer = [{ blotch = { scale = 6.0, contrast = 1.0, octaves = 4 } }, { lattice = { rows = 4, cols = 0, stagger = false, mortar = [84, 61, 34] } }]
+
+[shading]
+top = 1.0
+left = 0.8
+right = 0.6
