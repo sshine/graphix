@@ -841,6 +841,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "thomas"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "graphix",
+ "graphix-attractor",
+]
+
+[[package]]
 name = "tracing"
 version = "0.1.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"

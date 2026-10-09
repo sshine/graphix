@@ -26,6 +26,16 @@ This is a Cargo workspace with crates under `crates/`:
 - **aizawa**: The Aizawa attractor, the system behind the zensical.org background animation;
   its default preset is quasiperiodic rather than chaotic, so the warm-up is kept short to
   stop the strands converging onto one curve
+- **graphix-noise**: The deterministic hash noise (SplitMix64, 3D value noise, fBm, domain
+  warping) the generators share; a library with no binary
+- **graphix-attractor**: The machinery the attractor demos share (integrators, orbit trails,
+  the measured fit, projection and additive accumulation, and the common CLI); a library with
+  no binary, like graphix-noise
+- **aizawa**: The Aizawa attractor, the system behind the zensical.org background animation;
+  its default preset is quasiperiodic rather than chaotic, so the warm-up is kept short to
+  stop the strands converging onto one curve
+- **thomas**: The Thomas cyclically symmetric attractor, viewed down the (1,1,1) diagonal its
+  symmetry lies on; chaotic, so it takes a long warm-up and RK4
 - **conventional-commit-check**: The commit-msg git hook binary
 
 Crates follow one shape: a library holding the logic and public API (doc comments on all
@@ -61,6 +71,8 @@ The sandbox cannot take terminal screenshots, but PNG files can be viewed with t
 cargo run -p graphix -- <img.png> -m octant --raster out.png   # font-free PNG preview of the ANSI output
 cargo run --release -p pixel-planets -- --frames 4 --out dir/  # planet animation frames as PNGs
 cargo run --release -p flake -- --frames 4 --out dir/          # flake spin frames as PNGs
+cargo run --release -p aizawa -- --frames 4 --out dir/         # attractor frames as PNGs
+cargo run --release -p thomas -- --frames 4 --out dir/         # the other attractor
 cargo run --release -p aizawa -- --frames 4 --out dir/         # attractor frames as PNGs
 ```
 

@@ -28,6 +28,7 @@
         pixel-planets = buildCrate { pname = "pixel-planets"; };
         flake = buildCrate { pname = "flake"; };
         aizawa = buildCrate { pname = "aizawa"; };
+        thomas = buildCrate { pname = "thomas"; };
       };
 
       checks.graphix = packages.default;

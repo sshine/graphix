@@ -1,0 +1,23 @@
+[package]
+name = "thomas"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Trace the Thomas cyclically symmetric attractor in the terminal as ANSI art"
+readme = "../../README.md"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "thomas"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+graphix.workspace = true
+graphix-attractor.workspace = true
+clap.workspace = true
