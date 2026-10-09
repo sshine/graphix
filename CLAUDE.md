@@ -18,6 +18,14 @@ This is a Cargo workspace with crates under `crates/`:
 - **graphix-attractor**: The machinery the attractor demos share (integrators, orbit trails,
   the measured fit, projection and additive accumulation, and the common CLI); a library with
   no binary, like graphix-noise
+- **graphix-noise**: The deterministic hash noise (SplitMix64, 3D value noise, fBm, domain
+  warping) the generators share; a library with no binary
+- **graphix-attractor**: The machinery the attractor demos share (integrators, orbit trails,
+  the measured fit, projection and additive accumulation, and the common CLI); a library with
+  no binary, like graphix-noise
+- **aizawa**: The Aizawa attractor, the system behind the zensical.org background animation;
+  its default preset is quasiperiodic rather than chaotic, so the warm-up is kept short to
+  stop the strands converging onto one curve
 - **conventional-commit-check**: The commit-msg git hook binary
 
 Crates follow one shape: a library holding the logic and public API (doc comments on all
@@ -53,9 +61,10 @@ The sandbox cannot take terminal screenshots, but PNG files can be viewed with t
 cargo run -p graphix -- <img.png> -m octant --raster out.png   # font-free PNG preview of the ANSI output
 cargo run --release -p pixel-planets -- --frames 4 --out dir/  # planet animation frames as PNGs
 cargo run --release -p flake -- --frames 4 --out dir/          # flake spin frames as PNGs
+cargo run --release -p aizawa -- --frames 4 --out dir/         # attractor frames as PNGs
 ```
 
-Both `pixel-planets` and `flake` also take `--terminal-preview` with `--frames`, which
+`pixel-planets`, `flake` and `aizawa` also take `--terminal-preview` with `--frames`, which
 dumps the graphix cell rasterization instead of the raw frame:
 
 ```sh

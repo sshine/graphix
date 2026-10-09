@@ -27,6 +27,7 @@
         conventional-commit-check = buildCrate { pname = "conventional-commit-check"; };
         pixel-planets = buildCrate { pname = "pixel-planets"; };
         flake = buildCrate { pname = "flake"; };
+        aizawa = buildCrate { pname = "aizawa"; };
       };
 
       checks.graphix = packages.default;
