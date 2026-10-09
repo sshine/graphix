@@ -40,13 +40,62 @@ readme:
 readme-check:
     cargo readme {{readme_args}} | diff - README.md
 
+recipes_dir := "crates/pixel-blocks/recipes"
+
+# Regenerate the built-in block recipes as TOML
+recipes:
+    cargo run -q -p pixel-blocks -- --dump-recipes {{recipes_dir}}
+
+# Check the TOML recipes are in sync with the built-in definitions
+recipes-check:
+    cargo run -q -p pixel-blocks -- --dump-recipes target/recipes-check
+    diff -r {{recipes_dir}} target/recipes-check
+
 # Run CI checks locally
-ci: fmt-check lint test doc readme-check build
+ci: fmt-check lint test doc readme-check recipes-check build
     @echo "All CI checks passed!"
 
-# Render the sample image
-demo:
-    cargo run -p graphix -- irciii-logo.png
+# Seconds each animated demo runs before stopping on its own
+demo_secs := "8"
+
+# Showcase a renderer: image, blocks, planets, flake, aizawa, thomas, or all of them
+demo name='all':
+    @just demo-{{name}}
+
+# Every demo in turn, stills first
+demo-all: demo-image demo-blocks demo-planets demo-flake demo-aizawa demo-thomas
+
+# A PNG as ANSI art, in every granularity graphix offers
+demo-image:
+    cargo run -q --release -p pixel-blocks -- --scene crates/pixel-blocks/scenes/arch.txt --out target/demo.png
+    for mode in shade half-block sextant braille octant; do \
+        printf '\n  %s\n\n' "$mode"; \
+        cargo run -q --release -p graphix -- target/demo.png -H 20 -m "$mode"; \
+    done
+
+# Every built-in isometric block, side by side
+demo-blocks:
+    cargo run --release -p pixel-blocks
+
+# A procedurally generated planet, turning under its clouds
+demo-planets:
+    cargo run --release -p pixel-planets -- --duration {{demo_secs}}
+
+# The NixOS lambda flake, spinning
+demo-flake:
+    cargo run --release -p flake -- --duration {{demo_secs}} --tilt 25
+
+# The Aizawa attractor, turning about its axis
+demo-aizawa:
+    cargo run --release -p aizawa -- --duration {{demo_secs}}
+
+# The Thomas attractor, turning about its body diagonal
+demo-thomas:
+    cargo run --release -p thomas -- --duration {{demo_secs}}
+
+# Render an example block scene (arch, stairs)
+blocks scene='arch':
+    cargo run --release -p pixel-blocks -- --scene crates/pixel-blocks/scenes/{{scene}}.txt
 
 # Watch for changes and run tests
 watch:
