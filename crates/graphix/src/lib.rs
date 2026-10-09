@@ -6,6 +6,14 @@
 //! colors and Unicode block or dot characters, sized to fit the current
 //! terminal.
 //!
+//! The repository around it is a collection of terminal drawing experiments.
+//! `graphix` is the renderer they share; the other crates generate the images
+//! it draws: `pixel-planets` (procedural pixel-art planets), `flake` (a
+//! spinning, shaded NixOS lambda flake), `pixel-blocks` (isometric voxel cubes
+//! baked from declarative recipes), `aizawa` and `thomas` (two strange
+//! attractors traced as glowing strands) and the two libraries behind them,
+//! `graphix-attractor` and `graphix-noise`.
+//!
 //! ```sh
 //! graphix image.png               # fit to the current terminal size
 //! graphix image.png -w 80         # constrain to 80 columns

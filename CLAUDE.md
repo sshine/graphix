@@ -11,31 +11,18 @@ This is a Cargo workspace with crates under `crates/`:
   with an interactive `--editor` (ratatui/promptui-core) for tuning parameters live
 - **flake**: The spinning NixOS lambda flake (six extruded lambdas, z-buffered and shaded
   into an RGB frame per spin angle), ported from the ASCII spinner on jokamachi.systems
+- **pixel-blocks**: Minecraft-style isometric cubes in a 2:1 dimetric projection, baked from
+  declarative recipes (palette ramp + pattern per face) and composited on an integer grid
+- **graphix-attractor**: The machinery the attractor demos share (integrators, orbit
+  trails, the measured fit, projection and additive accumulation, and the common CLI);
+  a library with no binary, like graphix-noise
+- **aizawa**: The Aizawa attractor, the system behind the zensical.org background
+  animation; its default preset is quasiperiodic rather than chaotic, so the warm-up
+  is kept short to stop the strands converging onto one curve
+- **thomas**: The Thomas cyclically symmetric attractor, viewed down the (1,1,1)
+  diagonal its symmetry lies on; chaotic, so it takes a long warm-up and RK4
 - **graphix-noise**: The deterministic hash noise (SplitMix64, 3D value noise, fBm, domain
   warping) the generators share; a library with no binary
-- **graphix-noise**: The deterministic hash noise (SplitMix64, 3D value noise, fBm, domain
-  warping) the generators share; a library with no binary
-- **graphix-attractor**: The machinery the attractor demos share (integrators, orbit trails,
-  the measured fit, projection and additive accumulation, and the common CLI); a library with
-  no binary, like graphix-noise
-- **graphix-noise**: The deterministic hash noise (SplitMix64, 3D value noise, fBm, domain
-  warping) the generators share; a library with no binary
-- **graphix-attractor**: The machinery the attractor demos share (integrators, orbit trails,
-  the measured fit, projection and additive accumulation, and the common CLI); a library with
-  no binary, like graphix-noise
-- **aizawa**: The Aizawa attractor, the system behind the zensical.org background animation;
-  its default preset is quasiperiodic rather than chaotic, so the warm-up is kept short to
-  stop the strands converging onto one curve
-- **graphix-noise**: The deterministic hash noise (SplitMix64, 3D value noise, fBm, domain
-  warping) the generators share; a library with no binary
-- **graphix-attractor**: The machinery the attractor demos share (integrators, orbit trails,
-  the measured fit, projection and additive accumulation, and the common CLI); a library with
-  no binary, like graphix-noise
-- **aizawa**: The Aizawa attractor, the system behind the zensical.org background animation;
-  its default preset is quasiperiodic rather than chaotic, so the warm-up is kept short to
-  stop the strands converging onto one curve
-- **thomas**: The Thomas cyclically symmetric attractor, viewed down the (1,1,1) diagonal its
-  symmetry lies on; chaotic, so it takes a long warm-up and RK4
 - **conventional-commit-check**: The commit-msg git hook binary
 
 Crates follow one shape: a library holding the logic and public API (doc comments on all
@@ -71,13 +58,13 @@ The sandbox cannot take terminal screenshots, but PNG files can be viewed with t
 cargo run -p graphix -- <img.png> -m octant --raster out.png   # font-free PNG preview of the ANSI output
 cargo run --release -p pixel-planets -- --frames 4 --out dir/  # planet animation frames as PNGs
 cargo run --release -p flake -- --frames 4 --out dir/          # flake spin frames as PNGs
+cargo run --release -p pixel-blocks -- --out blocks.png        # every built-in block, RGBA PNG
 cargo run --release -p aizawa -- --frames 4 --out dir/         # attractor frames as PNGs
 cargo run --release -p thomas -- --frames 4 --out dir/         # the other attractor
-cargo run --release -p aizawa -- --frames 4 --out dir/         # attractor frames as PNGs
 ```
 
-`pixel-planets`, `flake` and `aizawa` also take `--terminal-preview` with `--frames`, which
-dumps the graphix cell rasterization instead of the raw frame:
+`pixel-planets`, `flake`, `aizawa` and `thomas` also take `--terminal-preview` with
+`--frames`, which dumps the graphix cell rasterization instead of the raw frame:
 
 ```sh
 cargo run --release -p flake -- --frames 2 --terminal-preview --out dir/
@@ -108,7 +95,7 @@ just            # list all available commands
 just fmt        # format code
 just lint       # run clippy
 just test       # run all tests
-just demo       # render the sample image
+just demo       # showcase every renderer (or one: image, blocks, planets, flake, aizawa, thomas)
 just ci         # run all CI checks locally
 ```
 
