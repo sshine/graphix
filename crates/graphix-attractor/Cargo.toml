@@ -1,0 +1,21 @@
+[package]
+name = "graphix-attractor"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Shared machinery for tracing strange attractors as ANSI art"
+readme = "../../README.md"
+
+[lib]
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+graphix.workspace = true
+graphix-noise.workspace = true
+clap.workspace = true
+thiserror.workspace = true
+image = { workspace = true, features = ["gif"] }

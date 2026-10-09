@@ -18,6 +18,7 @@ unwrap_used = "deny"
 # Internal crates
 graphix = { version = "0.1.0", path = "crates/graphix" }
 graphix-noise = { version = "0.1.0", path = "crates/graphix-noise" }
+graphix-attractor = { version = "0.1.0", path = "crates/graphix-attractor" }
 
 # Image decoding
 image = { version = "0.25", default-features = false, features = ["png"] }

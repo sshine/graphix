@@ -330,6 +330,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "graphix-attractor"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "graphix",
+ "graphix-noise",
+ "image",
+ "thiserror",
+]
+
+[[package]]
 name = "graphix-noise"
 version = "0.1.0"
 
