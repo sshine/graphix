@@ -11,6 +11,8 @@ This is a Cargo workspace with crates under `crates/`:
   with an interactive `--editor` (ratatui/promptui-core) for tuning parameters live
 - **flake**: The spinning NixOS lambda flake (six extruded lambdas, z-buffered and shaded
   into an RGB frame per spin angle), ported from the ASCII spinner on jokamachi.systems
+- **graphix-noise**: The deterministic hash noise (SplitMix64, 3D value noise, fBm, domain
+  warping) the generators share; a library with no binary
 - **conventional-commit-check**: The commit-msg git hook binary
 
 Crates follow one shape: a library holding the logic and public API (doc comments on all

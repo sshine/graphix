@@ -1,10 +1,14 @@
-//! Hand-rolled deterministic noise: an integer hash, 3D value noise, fractal
-//! Brownian motion, and domain warping.
+//! # graphix-noise
 //!
-//! Surface and cloud fields are sampled at points on the unit sphere (scaled
-//! by a frequency), so 3D noise gives seamless longitude wrap and no pole
-//! pinch for free. Time evolution moves the sample point through the field;
-//! no 4D noise is needed.
+//! Hand-rolled deterministic noise: an integer hash, 3D value noise, fractal
+//! Brownian motion, and domain warping. No RNG state and no dependencies —
+//! every value is a pure function of the seed and the sample point, so the
+//! renderers built on it can evaluate pixels in any order.
+//!
+//! The fields are 3D because the surfaces sampling them are curved or folded:
+//! a planet sampled on the unit sphere wraps in longitude with no pole pinch,
+//! and a cube sampled on its own surface has no seam at the edges. Time
+//! evolution moves the sample point through the field; no 4D noise is needed.
 
 /// SplitMix64: a fast, well-distributed 64-bit hash/PRNG step.
 pub fn splitmix64(x: u64) -> u64 {
@@ -15,7 +19,7 @@ pub fn splitmix64(x: u64) -> u64 {
 }
 
 /// Hash a seed and a 3D lattice coordinate into 64 bits.
-fn hash3(seed: u64, x: i64, y: i64, z: i64) -> u64 {
+pub fn hash3(seed: u64, x: i64, y: i64, z: i64) -> u64 {
     splitmix64(
         seed ^ (x as u64).wrapping_mul(0x9E37_79B9_7F4A_7C15)
             ^ (y as u64).wrapping_mul(0xC2B2_AE3D_27D4_EB4F)

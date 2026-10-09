@@ -23,10 +23,11 @@
 pub mod biome;
 pub mod clouds;
 pub mod editor;
-pub mod noise;
 pub mod output;
 pub mod planet;
 pub mod render;
+
+pub use graphix_noise as noise;
 
 pub use clouds::CloudMode;
 pub use planet::PlanetParams;
