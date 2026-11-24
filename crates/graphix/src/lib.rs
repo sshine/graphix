@@ -22,6 +22,21 @@
 //! graphix image.png -m octant     # finest 2x4 solid-fill matrix per cell
 //! ```
 //!
+//! ## Installation
+//!
+//! Every release carries statically linked musl binaries for `x86_64-linux` and
+//! `aarch64-linux`, so the downloaded binary runs on any Linux distribution
+//! without a matching glibc:
+//!
+//! ```sh
+//! tar -xzf graphix-v0.1.0-x86_64-unknown-linux-musl.tar.gz
+//! install -m755 graphix ~/.local/bin/
+//! ```
+//!
+//! With Nix, `nix run github:sshine/graphix -- image.png` builds and runs it
+//! straight from the flake. From a checkout, install with
+//! `cargo install --path crates/graphix`.
+//!
 //! ## Rendering modes
 //!
 //! Five granularity layers are supported, in increasing resolution, drawn from

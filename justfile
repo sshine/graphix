@@ -30,6 +30,27 @@ build:
 doc *args='':
     cargo doc --no-deps --all-features {{args}}
 
+release_targets := "x86_64-unknown-linux-musl aarch64-unknown-linux-musl"
+
+# Assert the release tag names the version cargo would publish
+check-version version:
+    @pkgid="$(cargo pkgid -p graphix)"; crate="v${pkgid##*#}"; \
+    if [ "$crate" != "{{version}}" ]; then \
+        echo "tag {{version}} does not match crate version $crate" >&2; exit 1; \
+    fi
+
+# Build the static musl release artifacts and their checksums into dist/
+dist version: (check-version version)
+    rm -rf dist && mkdir -p dist
+    for target in {{release_targets}}; do \
+        set -e; \
+        cargo build --release --locked --target "$target" -p graphix; \
+        name="graphix-{{version}}-$target"; \
+        tar -czf "dist/$name.tar.gz" -C "target/$target/release" graphix; \
+        ( cd dist && sha256sum "$name.tar.gz" > "$name.tar.gz.sha256" ); \
+    done
+    @ls -1 dist
+
 readme_args := "--project-root crates/graphix --no-title --no-license --no-badges --no-indent-headings"
 
 # Regenerate README.md from the graphix crate docs
